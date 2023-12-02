@@ -19,3 +19,16 @@ func TestSumPowerCubes(t *testing.T) {
     }
 }
 
+func TestParseGameString2(t *testing.T) {
+    testCases := []testCase{
+        {"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green", 48},
+        {"Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue", 12},
+    }
+
+    for _, i := range testCases {
+        res := ParseGameString2(i.test)
+        if res != i.want {
+            t.Errorf(`got %v, want match for %v`, res, i.want)
+        }
+    }
+}
