@@ -13,6 +13,7 @@ type testCase struct {
 var testCases = []testCase {
     {"3", 33},
     {"12", 12},
+    {"1a3", 13},
 }
 
 
