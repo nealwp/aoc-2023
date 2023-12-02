@@ -18,7 +18,30 @@ func TestSumCalibration2(t *testing.T) {
 
     res, err := SumCalibration2(input)
     if want != res || err != nil {
-        t.Fatalf(`got %v, %v, want match for %v, nil`, res, err, want)
+        t.Errorf(`got %v, %v, want match for %v, nil`, res, err, want)
+    }
+
+}
+
+type testCase2 struct {
+    val string
+    want string
+}
+
+func TestConvertToNumberString(t *testing.T){
+
+    testCases := []testCase2 {
+        {"one", "11"},
+        {"onetwo", "12"},
+        {"oneathree", "13"},
+    }
+
+    for _, test := range testCases {
+        res, err := ConvertToNumberString(test.val)
+        if test.want != res || err != nil {
+            t.Errorf(`got %v, %v, want match for %v, nil`, res, err, test.want)
+        }
+
     }
 
 }
