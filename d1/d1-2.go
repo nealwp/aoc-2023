@@ -2,11 +2,25 @@ package d1
 
 import (
 	"sort"
+	"strconv"
 	"strings"
 )
 
 func SumCalibration2(input []string) (int, error) {
-    return 0, nil
+    sum := 0
+    for _, i := range input {
+        o, err := ConvertToNumberString(i)    
+        if err != nil {
+            panic(err)
+        }
+        num, err := strconv.Atoi(o)
+        if err != nil {
+            panic(err)
+        }
+        sum += num
+    }
+
+    return sum, nil
 }
 
 type foundNumStr struct {
