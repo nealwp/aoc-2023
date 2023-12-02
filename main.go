@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-    res, err := d2.SumPossibleGameIds(inputs) 
+    res, err := d2.SumPowerCubes(inputs) 
     if err != nil {
         panic(err)
     }
