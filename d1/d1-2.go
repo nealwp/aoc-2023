@@ -1,9 +1,7 @@
 package d1
 
 import (
-	"sort"
 	"strconv"
-	"strings"
 )
 
 func SumCalibration2(input []string) (int, error) {
@@ -23,16 +21,9 @@ func SumCalibration2(input []string) (int, error) {
     return sum, nil
 }
 
-type foundNumStr struct {
-    num string
-    index int
-}
-
 func ConvertToNumberString(input string) (string, error) {
 
-    var found []foundNumStr
-
-    numNames := map[string]string {
+    numWords := map[string]string {
         "one": "1",
         "two": "2",
         "three": "3",
@@ -42,30 +33,42 @@ func ConvertToNumberString(input string) (string, error) {
         "seven": "7",
         "eight": "8",
         "nine": "9",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
     }
 
-    for k, v := range numNames {
-        keyIdx := strings.Index(input, k)
-        valIdx := strings.Index(input, v)
+    var res string
 
-        if keyIdx != -1 {
-            f := foundNumStr{num: v, index: keyIdx}
-            found = append(found, f)
+    // for each letter in input 
+    for i := range input {
+
+        // go thru the map
+        for k, v := range numWords {
+
+            // skip if word is longer than remaining string
+            if len(k) > len(input[i:]){
+                continue
+            }
+            
+            // window is length of word we looking for
+            // get the characters under the window
+            strWind := string(input[i:i + len(k)])
+
+            // if match, append value to result and get outta there
+            if strWind == k {
+                res += v
+                break
+            }
         }
-
-        if valIdx != -1 {
-            f := foundNumStr{num: v, index: valIdx}
-            found = append(found, f)
-        }
-
     }
 
-    sort.Slice(found, func(i, j int) bool {
-        return found[i].index < found[j].index
-    }) 
-
-    return found[0].num + found[len(found)-1].num, nil
+    return string(res[0]) + string(res[len(res)-1]), nil
 }
-
-
 

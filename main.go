@@ -8,11 +8,11 @@ import (
 
 func main() {
 
-    res, err := d1.SumCalibration(inputs)
+    res, err := d1.SumCalibration2(inputs)
     if err != nil {
         panic(err)
     }
-    fmt.Print(res)
+    fmt.Println(res)
 }
 
 var inputs = []string{
