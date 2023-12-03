@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-    res, err := d3.SumSchematic(inputs) 
+    res, err := d3.SumGearRatio(inputs) 
     if err != nil {
         panic(err)
     }

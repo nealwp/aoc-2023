@@ -1,97 +1,71 @@
 package d3
 
-import "fmt"
-
 func SumGearRatio(input []string) (int, error){
     MAX_X := len(input[0])
     MAX_Y := len(input)
     // gear is * adjacent to exactly 2 part numbers
-    star := '*'  // 42
+    star := '*' // 42
 
     // find all the number coords
     numMap := GetNumberSlots(input)
-    fmt.Println(numMap)
 
-    // find all the asterisk coords 
-    starMap := GetStarSlots(input)
-    fmt.Println(starMap)
+    var sum int
+
     // find all the asterisks, if adjacent to exactly 2 numbers
     // then save as gear. maybe remember the numbers here too?
-
     stars := make([][]bool, MAX_Y+1)
     for i := range stars {
         stars[i] = make([]bool, MAX_X+1)
     }
-    // map all the symbol coords out
+
+    // map all the star coords out
     for y, line := range input {
         for x, c := range line {
             if c == star {
-                // get adjacent number
-
-                stars[y][x] = true
+                // get all nums adjacent to this star
+                starCoord := Coord{y: y, x: x}
+                adjNums := GetAdjacentNumbers(starCoord, numMap)
+                if len(adjNums) == 2 {
+                    sum += (adjNums[0] * adjNums[1])
+                }
             }
-        }
-    }
-
-    adjacents := make([][]bool, MAX_Y+1)
-    for i := range adjacents {
-        adjacents[i] = make([]bool, MAX_X+1)
-    }
-
-    // now go thru the maps and see whats adjacent
-    for y, l := range input {
-        for x := range l {
-            // if the coord is a symbol, flag all "touching" coords
-            if stars[y][x] { 
-                // self
-                adjacents[y][x] = true
-                // left and right same line
-                adjacents[y][x-1] = true      
-                adjacents[y][x+1] = true      
-
-                // line below 
-                adjacents[y+1][x-1] = true      
-                adjacents[y+1][x] = true      
-                adjacents[y+1][x+1] = true      
-
-                // line above 
-                adjacents[y-1][x-1] = true      
-                adjacents[y-1][x] = true      
-                adjacents[y-1][x+1] = true      
-            } 
-        }
-    }
-
-    var sum int
-    for _, slot := range numMap {
-        i := slot.start.x
-        e := slot.end.x
-        for i < e {
-            if adjacents[slot.start.y][i] {
-                sum += slot.number 
-                break
-            }
-            i++
         }
     }
 
     return sum, nil
 }
 
-type StarSlot struct {
-    pos Coord
-}
-
-func GetStarSlots(input []string) ([]StarSlot) {
-    var stars []StarSlot
-
-    for y, line := range input {
-        for x, c := range line {
-            if c == 42 {
-                s := StarSlot{Coord{y: y, x:x}}
-                stars = append(stars, s)
+func GetAdjacentNumbers(star Coord, numMap []NumberSlot) ([]int) {
+    var adjNums []int
+    for _, slot := range numMap {
+        // only scan lines 1 up, 1 down, or same
+        if slot.start.y > (star.y + 1) || slot.start.y < (star.y - 1) {
+            continue
+        }
+        i := slot.start.x
+        e := slot.end.x
+        for i < e {
+            // left or right same line
+            if i == star.x + 1 && slot.start.y == star.y || i == star.x - 1 && slot.start.y == star.y {
+                adjNums = append(adjNums, slot.number)
+                break
             }
+
+            // left, centered, or right up line 
+            if i == star.x + 1 && slot.start.y == star.y - 1 || i == star.x && slot.start.y == star.y - 1 || i == star.x - 1 && slot.start.y == star.y -1 {
+                adjNums = append(adjNums, slot.number)
+                break
+            }
+
+
+            // left, centered, or right down line 
+            if i == star.x + 1 && slot.start.y == star.y + 1 || i == star.x && slot.start.y == star.y + 1 || i == star.x - 1 && slot.start.y == star.y + 1 {
+                adjNums = append(adjNums, slot.number)
+                break
+            }
+
+            i++
         }
     }
-    return stars
+    return adjNums
 }
