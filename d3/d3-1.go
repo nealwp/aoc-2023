@@ -1,7 +1,6 @@
 package d3
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 )
@@ -28,13 +27,11 @@ func SumSchematic(input []string) (int, error) {
     for i := range symbols {
         symbols[i] = make([]bool, MAX_X+1)
     }
-    fmt.Println("--symbols--")
     // map all the symbol coords out
     for y, line := range input {
         for x, c := range line {
             if c < 48 && c != 46 || c == 64 || c == 61 {
                symbols[y][x] = true
-               fmt.Printf("found symbol: %v\n", string(c))
             }
         }
     }
@@ -45,7 +42,6 @@ func SumSchematic(input []string) (int, error) {
         adjacents[i] = make([]bool, MAX_X+1)
     }
 
-    fmt.Println("--adjacents--")
     // now go thru the maps and see whats adjacent
     for y, l := range input {
         for x := range l {
