@@ -1,6 +1,10 @@
 package d3
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+	"strconv"
+)
 
 func SumSchematic(input []string) (int, error) {
     // char code for period (46)
@@ -11,15 +15,17 @@ func SumSchematic(input []string) (int, error) {
 
     // need to know line above and below
     // lines are all fixed width
+    // NO SYMBOLS ON TOP LINE OR BOTTOM LINE
 
-    //MAX_LEN := len(input[0])
-
-    // take each number
+    MAX_X := len(input[0])
+    MAX_Y := len(input)
+    // take each number 
     // scan next char, prev char, next line up, +1, -1, prev line +1, -1
     
+    fmt.Println("--symbols--")
     // map all the symbol coords out
-    var symLines [][]bool
-    for _, line := range input {
+    var symbols [][]bool
+    for y, line := range input {
         var lineSyms []bool
         for _, c := range line {
             var sc bool 
@@ -28,12 +34,14 @@ func SumSchematic(input []string) (int, error) {
             }
             lineSyms = append(lineSyms, sc)
         }
-        symLines = append(symLines, lineSyms)
+        symbols = append(symbols, lineSyms)
+        fmt.Println(symbols[y])
     }
 
+    fmt.Println("--numbers--")
     // map all the nums coords out
-    var numLines [][]bool
-    for _, line := range input {
+    var numbers [][]bool
+    for y, line := range input {
         var lineNum []bool
         for _, c := range line {
             var num bool 
@@ -42,20 +50,68 @@ func SumSchematic(input []string) (int, error) {
             }
             lineNum = append(lineNum, num)
         }
-        numLines = append(numLines, lineNum)
+        numbers = append(numbers, lineNum)
+        fmt.Println(numbers[y])
     }
 
+    // setup empty adjacents map
+    adjacents := make([][]bool, MAX_Y)
+    for i := range adjacents {
+        adjacents[i] = make([]bool, MAX_X)
+    }
+
+    fmt.Println("--adjacents--")
     // now go thru the maps and see whats adjacent
-    for i, l := range input {
-        for ii := range l {
-            if numLines[i][ii] {
-                if symLines[i][ii] || symLines[i][ii - 1] || symLines[i][ii + 1] {
-                }
+    for y, l := range input {
+        for x := range l {
+            // if the coord is a symbol, flag all "touching" coords
+            if symbols[y][x] { 
+                // left and right same line
+                adjacents[y][x-1] = true      
+                adjacents[y][x-1] = true      
+
+                // line below 
+                adjacents[y+1][x-1] = true      
+                adjacents[y+1][x] = true      
+                adjacents[y+1][x+1] = true      
+
+                // line above 
+                adjacents[y-1][x-1] = true      
+                adjacents[y-1][x] = true      
+                adjacents[y-1][x+1] = true      
+            } 
+        }
+        fmt.Println(adjacents[y])
+    }
+
+    // now collect all the numbers to sum
+    type Coord struct {
+        y int
+        x int
+    }
+
+    type NumberSlot struct {
+        number int 
+        start Coord
+        end Coord
+    }
+
+    re := regexp.MustCompile("\\d+")
+    var numMap []NumberSlot
+    for y, line := range input {
+        ints := re.FindAllString(line, -1)
+        coords := re.FindAllStringIndex(line, -1)
+        for i := range ints {
+            num, _ := strconv.Atoi(ints[i])
+            n := NumberSlot{
+                number: num, 
+                start: Coord{y: y, x: coords[i][0]},
+                end: Coord{y: y, x: coords[i][1]},
             }
+            numMap = append(numMap, n)
+            fmt.Println(n)
         }
     }
-    fmt.Println(symLines)
-    fmt.Println(numLines)
-    
+
     return 0, nil
 }
