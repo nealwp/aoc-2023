@@ -4,7 +4,7 @@ import (
     "testing"
 )
 
-func TestSomething(t *testing.T) {
+func TestSumSchematic(t *testing.T) {
     input := []string{
         "467..114..",
         "...*......",
@@ -14,7 +14,7 @@ func TestSomething(t *testing.T) {
         ".....+.58.",
         "..592.....",
         "......755.",
-        "...$.*....",
+        "...$.&....",
         ".664.598..",
     }
 

@@ -12,7 +12,9 @@ func SumSchematic(input []string) (int, error) {
     // max for a number = 9 + 48 (57)
     // valid num ranges = (48 - 57)
     // 46 is a period, anything else must be symbol
-
+    
+    // symbols we got covered: * # + $
+    // missing: @ (64) / (47) % (37) = (61) & (38)
     // need to know line above and below
     // lines are all fixed width
     // NO SYMBOLS ON TOP LINE OR BOTTOM LINE
@@ -22,42 +24,25 @@ func SumSchematic(input []string) (int, error) {
     // take each number 
     // scan next char, prev char, next line up, +1, -1, prev line +1, -1
     
+    symbols := make([][]bool, MAX_Y+1)
+    for i := range symbols {
+        symbols[i] = make([]bool, MAX_X+1)
+    }
     fmt.Println("--symbols--")
     // map all the symbol coords out
-    var symbols [][]bool
     for y, line := range input {
-        var lineSyms []bool
-        for _, c := range line {
-            var sc bool 
-            if c < 48 && c != 46 {
-                sc = true
+        for x, c := range line {
+            if c < 48 && c != 46 || c == 64 || c == 61 {
+               symbols[y][x] = true
+               fmt.Printf("found symbol: %v\n", string(c))
             }
-            lineSyms = append(lineSyms, sc)
         }
-        symbols = append(symbols, lineSyms)
-        fmt.Println(symbols[y])
-    }
-
-    fmt.Println("--numbers--")
-    // map all the nums coords out
-    var numbers [][]bool
-    for y, line := range input {
-        var lineNum []bool
-        for _, c := range line {
-            var num bool 
-            if c > 47 && c < 58 {
-                num = true
-            }
-            lineNum = append(lineNum, num)
-        }
-        numbers = append(numbers, lineNum)
-        fmt.Println(numbers[y])
     }
 
     // setup empty adjacents map
-    adjacents := make([][]bool, MAX_Y)
+    adjacents := make([][]bool, MAX_Y+1)
     for i := range adjacents {
-        adjacents[i] = make([]bool, MAX_X)
+        adjacents[i] = make([]bool, MAX_X+1)
     }
 
     fmt.Println("--adjacents--")
@@ -66,9 +51,11 @@ func SumSchematic(input []string) (int, error) {
         for x := range l {
             // if the coord is a symbol, flag all "touching" coords
             if symbols[y][x] { 
+                // self
+                adjacents[y][x] = true
                 // left and right same line
                 adjacents[y][x-1] = true      
-                adjacents[y][x-1] = true      
+                adjacents[y][x+1] = true      
 
                 // line below 
                 adjacents[y+1][x-1] = true      
@@ -81,7 +68,6 @@ func SumSchematic(input []string) (int, error) {
                 adjacents[y-1][x+1] = true      
             } 
         }
-        fmt.Println(adjacents[y])
     }
 
     // now collect all the numbers to sum
@@ -109,9 +95,23 @@ func SumSchematic(input []string) (int, error) {
                 end: Coord{y: y, x: coords[i][1]},
             }
             numMap = append(numMap, n)
-            fmt.Println(n)
         }
     }
 
-    return 0, nil
+
+    var sum int
+    for _, slot := range numMap {
+        // check if coords overlap with any adjacents
+        i := slot.start.x
+        e := slot.end.x
+        for i < e {
+            if adjacents[slot.start.y][i] {
+                sum += slot.number 
+                break
+            }
+            i++
+        }
+    }
+
+    return sum, nil
 }
