@@ -39,6 +39,3 @@ func CalibrationValue(input string) (int, error) {
     }
 
 }
-
-
-

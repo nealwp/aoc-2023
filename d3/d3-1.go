@@ -66,35 +66,7 @@ func SumSchematic(input []string) (int, error) {
         }
     }
 
-    // now collect all the numbers to sum
-    type Coord struct {
-        y int
-        x int
-    }
-
-    type NumberSlot struct {
-        number int 
-        start Coord
-        end Coord
-    }
-
-    re := regexp.MustCompile("\\d+")
-    var numMap []NumberSlot
-    for y, line := range input {
-        ints := re.FindAllString(line, -1)
-        coords := re.FindAllStringIndex(line, -1)
-        for i := range ints {
-            num, _ := strconv.Atoi(ints[i])
-            n := NumberSlot{
-                number: num, 
-                start: Coord{y: y, x: coords[i][0]},
-                end: Coord{y: y, x: coords[i][1]},
-            }
-            numMap = append(numMap, n)
-        }
-    }
-
-
+    numMap := GetNumberSlots(input)
     var sum int
     for _, slot := range numMap {
         // check if coords overlap with any adjacents
@@ -110,4 +82,34 @@ func SumSchematic(input []string) (int, error) {
     }
 
     return sum, nil
+}
+
+type Coord struct {
+    y int
+    x int
+}
+
+type NumberSlot struct {
+    number int 
+    start Coord
+    end Coord
+}
+
+func GetNumberSlots(input []string)([]NumberSlot){
+    re := regexp.MustCompile("\\d+")
+    var numMap []NumberSlot
+    for y, line := range input {
+        ints := re.FindAllString(line, -1)
+        coords := re.FindAllStringIndex(line, -1)
+        for i := range ints {
+            num, _ := strconv.Atoi(ints[i])
+            n := NumberSlot{
+                number: num, 
+                start: Coord{y: y, x: coords[i][0]},
+                end: Coord{y: y, x: coords[i][1]},
+            }
+            numMap = append(numMap, n)
+        }
+    }
+    return numMap
 }

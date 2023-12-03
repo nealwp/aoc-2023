@@ -25,3 +25,4 @@ func TestSumGearRatio(t *testing.T){
         t.Errorf(`got %v, %v, want match for %v, nil`, res, err, want)
     }
 }
+

@@ -14,10 +14,9 @@ func TestSumSchematic(t *testing.T) {
         ".....+.58.",
         "..592.....",
         "......755.",
-        "...$.&....",
+        "...$.*....",
         ".664.598..",
     }
-
 
     want := 4361
     res, err := SumSchematic(input)
