@@ -1,7 +1,6 @@
 package d4
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -27,7 +26,6 @@ func GetWinnings(input string) int {
         }
     }
 
-    fmt.Println(holderMap)
     for _, w := range winners {
         if _, found := holderMap[strings.TrimSpace(w)]; found {
             if points == 0 {
